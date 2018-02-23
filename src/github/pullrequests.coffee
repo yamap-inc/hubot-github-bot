@@ -20,6 +20,9 @@ class PullRequests
       repo.pulls.fetch(state: "open")
       .then (json) ->
         return Promise.all json.items.map (pr) ->
+          return if not pr.labels.some (label) -> label.name.match(/review|レビュー/i)
+          return if pr.title.match(/wip/i)
+          return if pr.labels.some (label) -> label.name.match(/someday|wip/i)
           if user?
             return if not pr.assignee?
             github = octo.fromUrl(pr.assignee.url)
